@@ -24,12 +24,12 @@ export const EnergyChart = ({ data }: EnergyChartProps) => {
   };
 
   return (
-    <div className="bg-sky-950 rounded-lg shadow-md p-6">
+    <div className="bg-sky-950 text-slate-200 rounded-lg shadow-md p-6">
       <div className="mb-4">
-        <h3 className="text-xl font-semibold text-slate-600 mb-2">{getDayLabel(data.date)}</h3>
+        <h3 className="text-xl font-semibold  mb-2">{getDayLabel(data.date)}</h3>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-slate-600">Czysta energia:</span>
-          <span className="text-lg font-bold text-green-600">
+          <span className="text-sm ">Czysta energia:</span>
+          <span className="text-lg font-bold text-green-500">
             {data.cleanEnergyPercentage.toFixed(2)}%
           </span>
         </div>
