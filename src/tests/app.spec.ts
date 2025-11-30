@@ -8,8 +8,8 @@ test.describe('Energy Mix Application', () => {
 
     await page.waitForSelector('canvas', { timeout: 10000 });
 
-    const charts = page.locator('canvas');
-    await expect(charts).toHaveCount(3);
+    const chartCards = page.locator('.bg-sky-950.rounded-lg.shadow-md');
+    await expect(chartCards).toHaveCount(4);
 
     await expect(page.getByText('Dzisiaj')).toBeVisible();
     await expect(page.getByText('Jutro')).toBeVisible();
@@ -26,8 +26,7 @@ test.describe('Energy Mix Application', () => {
     await page.waitForSelector('text=Wynik optymalizacji', { timeout: 10000 });
 
     await expect(page.getByText('Wynik optymalizacji')).toBeVisible();
-    await expect(page.getByText('Początek ładowania')).toBeVisible();
-    await expect(page.getByText('Koniec ładowania')).toBeVisible();
+    await expect(page.locator('p').filter({ hasText: 'Okno ładowania' })).toBeVisible();
     await expect(page.getByText('Średni udział czystej energii')).toBeVisible();
 
     const cleanEnergyPercentage = page.locator('text=/\\d+\\.\\d+%/').first();

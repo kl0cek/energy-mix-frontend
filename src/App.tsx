@@ -49,7 +49,7 @@ export const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-slate-900 text-center text-slate-200">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <header className="text-center mb-12">
           <h1 className="text-4xl font-bold text-slate-200 mb-2">Miks Energetyczny UK</h1>
@@ -76,12 +76,26 @@ export const App = () => {
                 {energyData.map((dayData) => (
                   <EnergyChart key={dayData.date} data={dayData} />
                 ))}
+                {energyData.length < 3 && (
+                  <div className="bg-sky-950 rounded-lg shadow-md p-6 flex  justify-center min-h-[300px]">
+                    <div className="text-center">
+                      <h3 className="text-xl font-semibold mb-2">Pojutrze</h3>
+                      <p className="text-sm mt-2">Brak danych prognostycznych</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </section>
 
-            <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ChargingForm onSubmit={handleChargingSubmit} isLoading={isLoadingCharging} />
-              {chargingWindow && <ChargingResult result={chargingWindow} />}
+            <section className="mb-12 flex flex-col items-center gap-6">
+              <div className="md:w-[66%]">
+                <ChargingForm onSubmit={handleChargingSubmit} isLoading={isLoadingCharging} />
+              </div>
+              {chargingWindow && (
+                <div className="md:w-[66%]">
+                  <ChargingResult result={chargingWindow} />
+                </div>
+              )}
             </section>
           </>
         )}
