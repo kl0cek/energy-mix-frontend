@@ -23,6 +23,7 @@ export const PIE_CHART_OPTIONS: ChartOptions<'pie'> = {
         font: {
           size: 11,
         },
+        color: '#cbd5e1',
       },
     },
     tooltip: {

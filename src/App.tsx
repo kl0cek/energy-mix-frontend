@@ -76,7 +76,8 @@ export const App = () => {
                 {energyData.map((dayData) => (
                   <EnergyChart key={dayData.date} data={dayData} />
                 ))}
-                {energyData.length < 3 && (
+                { //jest jakis edge case? ze pod koniec miesiaca 29 i 30 nie wyswietla sie 3 dzien lols : < 
+                energyData.length < 3 && (
                   <div className="bg-sky-950 rounded-lg shadow-md p-6 flex  justify-center min-h-[300px]">
                     <div className="text-center">
                       <h3 className="text-xl font-semibold mb-2">Pojutrze</h3>
