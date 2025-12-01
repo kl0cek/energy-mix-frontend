@@ -8,7 +8,7 @@ RUN npm ci
 
 COPY . .
 
-RUN npm run build  # Tworzy /dist
+RUN npm run build
 
 FROM nginx:alpine
 
