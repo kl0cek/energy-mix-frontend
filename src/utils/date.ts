@@ -24,3 +24,19 @@ export const getDayLabel = (dateString: string): string => {
 
   return formatDate(dateString);
 };
+
+export const getDayLabels = () => {
+  const today = new Date();
+  
+  const dates = [0, 1, 2].map(offset => {
+    const d = new Date();
+    d.setDate(today.getDate() + offset);
+
+    return {
+      date: d.toISOString().split("T")[0],
+      label: getDayLabel(d.toISOString())
+    };
+  });
+
+  return dates;
+};

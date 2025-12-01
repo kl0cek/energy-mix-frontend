@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
-import type { DailyEnergyMix, OptimalChargingWindow } from './types/types';
-import { fetchEnergyMix, fetchOptimalCharging } from './services/apiClient';
+import { useEnergyData } from './hooks/useEnergyData';
+import { useChargingOptimization } from './hooks/useChargingOptimization';
+import { useThemeContext } from './context/themeContext';
+import { Sun, Moon } from 'lucide-react';
+import { getDayLabels } from './utils/date';
 import {
   EnergyChart,
   ChargingForm,
@@ -10,50 +12,26 @@ import {
 } from './components/index';
 
 export const App = () => {
-  const [energyData, setEnergyData] = useState<DailyEnergyMix[]>([]);
-  const [chargingWindow, setChargingWindow] = useState<OptimalChargingWindow | null>(null);
-  const [isLoadingEnergy, setIsLoadingEnergy] = useState(true);
-  const [isLoadingCharging, setIsLoadingCharging] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { energyData, isLoading: isLoadingEnergy, error: energyError } = useEnergyData();
+  const { result, isLoading: isLoadingCharging, error: chargingError, calculate } = useChargingOptimization();
+  const { theme, toggleTheme } = useThemeContext();
 
-  useEffect(() => {
-    loadEnergyData();
-  }, []);
+  const error = energyError || chargingError;
 
-  const loadEnergyData = async () => {
-    try {
-      setIsLoadingEnergy(true);
-      setError(null);
-      const data = await fetchEnergyMix();
-      setEnergyData(data);
-    } catch (err) {
-      setError('Nie udało się pobrać danych o miksie energetycznym');
-      console.error(err);
-    } finally {
-      setIsLoadingEnergy(false);
-    }
-  };
-
-  const handleChargingSubmit = async (duration: number) => {
-    try {
-      setIsLoadingCharging(true);
-      setError(null);
-      const result = await fetchOptimalCharging(duration);
-      setChargingWindow(result);
-    } catch (err) {
-      setError('Nie udało się obliczyć optymalnego okna ładowania');
-      console.error(err);
-    } finally {
-      setIsLoadingCharging(false);
-    }
-  };
+  const dayLabels = getDayLabels();
 
   return (
-    <div className="min-h-screen bg-slate-900 text-center text-slate-200">
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-slate-900' : 'bg-gray-100'} text-center`}>
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <header className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-slate-200 mb-2">Miks Energetyczny UK</h1>
-          <p className="text-slate-200">
+        <header className="text-center mb-12 relative">
+          <div className="absolute top-0 right-0 flex gap-2">
+            <p className={` p-2 ${theme === 'dark' ? 'text-slate-200' : 'text-gray-700'}`}> Change theme </p>
+            <button onClick={toggleTheme} className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-sky-950 text-slate-200' : 'bg-white text-gray-800 shadow'}`}>
+              {theme === 'dark' ? <Sun /> : <Moon />}
+            </button>
+          </div>
+          <h1 className={`text-4xl font-bold ${theme === 'dark' ? 'text-slate-200' : 'text-gray-900'} mb-2`}>Miks Energetyczny UK</h1>
+          <p className={theme === 'dark' ? 'text-slate-200' : 'text-gray-700'}>
             Analiza miksu energetycznego i optymalizacja ładowania pojazdów elektrycznych
           </p>
         </header>
@@ -69,32 +47,36 @@ export const App = () => {
         ) : (
           <>
             <section className="mb-12">
-              <h2 className="text-2xl font-bold text-slate-200 mb-6">
+              <h2 className={`text-2xl font-bold ${theme === 'dark' ? 'text-slate-200' : 'text-gray-900'} mb-6`}>
                 Prognozy miksu energetycznego
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
-                {energyData.map((dayData) => (
-                  <EnergyChart key={dayData.date} data={dayData} />
-                ))}
-                { //jest jakis edge case? ze pod koniec miesiaca 29 i 30 nie wyswietla sie 3 dzien lols : < 
-                energyData.length < 3 && (
-                  <div className="bg-sky-950 rounded-lg shadow-md p-6 flex  justify-center min-h-[300px]">
-                    <div className="text-center">
-                      <h3 className="text-xl font-semibold mb-2">Pojutrze</h3>
-                      <p className="text-sm mt-2">Brak danych prognostycznych</p>
+                {dayLabels.map((day) => {
+                  const dayData = energyData.find(d => d.date === day.date);
+                  
+                  if (dayData) {
+                    return <EnergyChart key={day.date} data={dayData} />;
+                  }
+                  
+                  return (
+                    <div key={day.date} className={`${theme === 'dark' ? 'bg-sky-950' : 'bg-white shadow-md'} rounded-lg p-6 flex items-center justify-center min-h-[300px]`}>
+                      <div className="text-center">
+                        <h3 className={`text-xl font-semibold mb-2 ${theme === 'dark' ? 'text-slate-200' : 'text-gray-900'}`}>{day.label}</h3>
+                        <p className={`text-sm mt-2 ${theme === 'dark' ? 'text-slate-300' : 'text-gray-600'}`}>Brak danych prognostycznych</p>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })}
               </div>
             </section>
 
             <section className="mb-12 flex flex-col items-center gap-6">
               <div className="md:w-[66%]">
-                <ChargingForm onSubmit={handleChargingSubmit} isLoading={isLoadingCharging} />
+                <ChargingForm onSubmit={calculate} isLoading={isLoadingCharging} />
               </div>
-              {chargingWindow && (
+              {result && (
                 <div className="md:w-[66%]">
-                  <ChargingResult result={chargingWindow} />
+                  <ChargingResult result={result} />
                 </div>
               )}
             </section>
