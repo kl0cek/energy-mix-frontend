@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Energy Mix Application', () => {
-  test('should display energy mix charts and calculate optimal charging window', async ({ page }) => {
+  test('should display energy mix charts and calculate optimal charging window', async ({
+    page,
+  }) => {
     await page.goto('/');
 
     await expect(page.locator('h1')).toContainText('Miks Energetyczny UK');
@@ -11,7 +13,7 @@ test.describe('Energy Mix Application', () => {
     const energySection = page.locator('section').first();
     const dayHeadings = energySection.getByRole('heading', { level: 3 });
     await expect(dayHeadings).toHaveCount(3);
-    
+
     await expect(page.getByText('Dzisiaj')).toBeVisible();
     await expect(page.getByText('Jutro')).toBeVisible();
     await expect(page.getByText('Pojutrze')).toBeVisible();
