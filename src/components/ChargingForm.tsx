@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useThemeContext } from '../hooks/useThemeContext';
-import dotenv from 'dotenv'
 
-dotenv.config()
+const MIN_HOURS = import.meta.env.VITE_MIN_CHARGING_HOURS || 1;
+const MAX_HOURS = import.meta.env.VITE_MAX_CHARGING_HOURS || 6;
 
 interface ChargingFormProps {
   onSubmit: (duration: number) => void;
@@ -31,8 +31,8 @@ export const ChargingForm = ({ onSubmit, isLoading }: ChargingFormProps) => {
           <input
             type="number"
             id="duration"
-            min={process.env.VITE_MIN_CHARGING_HOURS}
-            max={process.env.VITE_MAX_CHARGING_HOURS}
+            min={MIN_HOURS}
+            max={MAX_HOURS}
             value={duration}
             onChange={(e) => setDuration(Number(e.target.value))}
             className={`w-full px-4 py-2 border ${theme === 'dark' ? 'border-gray-600 bg-slate-800 text-slate-200' : 'border-gray-300 bg-white text-gray-900'} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
