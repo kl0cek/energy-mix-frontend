@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { ThemeContext } from './themeContext';
+import { ThemeContext } from './ThemeContext';
 import { useTheme } from '../hooks/useTheme';
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
