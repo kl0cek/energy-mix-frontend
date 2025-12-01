@@ -1,6 +1,6 @@
-import { useState } from "react";
-import type { OptimalChargingWindow } from "../types/types";
-import { fetchOptimalCharging } from "../services/apiClient";
+import { useState } from 'react';
+import type { OptimalChargingWindow } from '../types/types';
+import { fetchOptimalCharging } from '../services/apiClient';
 
 export const useChargingOptimization = () => {
   const [result, setResult] = useState<OptimalChargingWindow | null>(null);
@@ -13,7 +13,7 @@ export const useChargingOptimization = () => {
       setError(null);
       const data = await fetchOptimalCharging(duration);
       setResult(data);
-    } catch (err) {
+    } catch {
       setError('Nie udało się obliczyć');
     } finally {
       setIsLoading(false);

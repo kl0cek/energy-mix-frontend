@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import type { DailyEnergyMix } from "../types/types";
-import { fetchEnergyMix } from "../services/apiClient";
+import { useState, useEffect } from 'react';
+import type { DailyEnergyMix } from '../types/types';
+import { fetchEnergyMix } from '../services/apiClient';
 
 export const useEnergyData = () => {
   const [energyData, setEnergyData] = useState<DailyEnergyMix[]>([]);
@@ -13,7 +13,7 @@ export const useEnergyData = () => {
       setError(null);
       const data = await fetchEnergyMix();
       setEnergyData(data);
-    } catch (err) {
+    } catch {
       setError('Nie udało się pobrać danych');
     } finally {
       setIsLoading(false);
